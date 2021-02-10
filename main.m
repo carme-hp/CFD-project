@@ -24,6 +24,21 @@
 % to the staggered grid setup, we need an additional boundary node for the
 % velocities)
 
+%STEPS________________________________
+% Set input parameters: viscosity, density, number of grid points, 
+% time information, and boundary conditions
+% Create the index extents and the computational grid 
+% Initialize any arrays you use to allocate the memory
+% Create the Laplacian operator 
+% Loop over time 
+% Apply boundary conditions to the velocity 
+% Perform the predictor step 
+% Form the right-hand-side of the Poisson equation 
+% Solve for the pressure using \
+% Perform the corrector step 
+% Plot  
+% End Simulation
+
 clear; close all; clc;
 
 %% set input parameters
