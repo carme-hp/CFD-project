@@ -2,8 +2,8 @@
 
 function [L] = Laplacian(L,nx,ny,hx,hy)
 
-for j=1:ny
-    for i=1:nx
+for j=2:ny
+    for i=2:nx
         L(i+(j-1)*nx, i+(j-1)*nx)=2*hx^2+2*hy^2 ;
         for ii=i-1:2:i+1
             if (ii>0 && ii<=nx) %Interior point
