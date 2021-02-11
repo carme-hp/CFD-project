@@ -31,18 +31,18 @@ actualtime = 0;
 hx=Lx/nx;
 hy=Ly/ny;
 %% Memory allocation to matrices
-utemp = zeros(nx+1,ny+1);
+utemp = zeros(nx+1,ny+1); % CARME: nx+2, ny+2 (thats what you get the index error (holds for u.v,p)
 vtemp = zeros(nx+1,ny+1);
 u = zeros(nx+1,ny+1);
 v = zeros(nx+1,ny+1);
 p = zeros(nx+1,ny+1);
-R = zeros(nx,1);
-L=zeros(nx*ny,nx*ny);
+R = zeros(nx,1); % CARME: wrong dimensions (nx*ny)
+L=zeros(nx*ny,nx*ny); % CARME : unnecessary line
 
 %% Laplacian operator
 L = Laplacian(L,nx,ny,hx,hy);
 % Set pressure BC
-L(1,:)=0; L(1,1)=1;
+L(1,:)=0; L(1,1)=1; 
 %% time loop warning for too large timestep
 if (max(max(u)))*dt/hx >= 1 || (max(max(v)))*dt/hy >= 1
     disp ('timestep too large, divergence may occur')
@@ -55,12 +55,12 @@ else
         % BC wall
         u(1,:)=0;
         v(1,:)=0;
-        u(nx+1,:)=0;
+        u(nx+1,:)=0; % CARME nx+2
         v(nx+1,:)=0;
         %% temporary velocity calculation (predictor step)
         [utemp,vtemp]=predictor(utemp,vtemp,u,v,nx,ny,hx,hy,nu,dt);
         %Gaussian Layer
-        u(:,nx+1) = u(:,nx);
+        u(:,nx+1) = u(:,nx); % CARME u(:,nx+2) = u(:,nx+1);
         v(:,nx+1) = v(:,nx);
         %% compute RHS
         n = 0;
@@ -71,20 +71,20 @@ else
                      +(vtemp(i,j+1)-vtemp(i,j))*hy);
             end
         end
-        R(nx+1,1)=R(nx,1);
+        R(nx+1,1)=R(nx,1); % CARME:  rhs doesnt include ghost layers (nx*ny) so you dont need that (plus if you did it would be nx+2)
         %% solve pressure
         % pressure solve with Laplacian pv = L\RHS
         % pv is a vector including the pressure value of every cell
         pv = L\R;
         %convert pv into pressure field
-        n = 0;
+        n = 0; % CARME: achtung!! term R(1) corresponds to entry (2,2) in the p-matrix because of ghost layers. 
         for j = 2:ny
             for i = 2:nx
                 n = n+1;
                 p(i,j) = pv(n);
             end
         end
-        p(:,nx+1) = p(:,nx);
+        p(:,nx+1) = p(:,nx); 
         %% velocity correction (corrector step)
         [u,v] = corrector(u,v,utemp,vtemp,dt,rho,p,hx,hy,nx,ny);
         %Gaussian Layer
